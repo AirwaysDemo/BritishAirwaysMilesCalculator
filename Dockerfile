@@ -1,7 +1,16 @@
 # Docker multi-stage build
 
 # 1. Building the App with Maven
+FROM maven:3.9.4-eclipse-temurin-17-alpine
 
+ADD . /britishmiles
+WORKDIR /britishmiles
+
+# Just echo so we can see, if everything is there :)
+RUN ls -l
+
+# Run Maven build
+RUN mvn clean install
 
 # 2. Just using the build artifact and then removing the build-container
 FROM openjdk:17-alpine
@@ -22,7 +31,7 @@ VOLUME /tmp
 USER 10014
 
 # Add Spring Boot app.jar to Container
-ADD target/british-miles.jar british-miles.jar
+COPY --from=0 "/britishmiles/target/british-miles.jar" app.jar
 
 # Fire up our Spring Boot app by default
-CMD [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /british-miles.jar" ]
+CMD [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
