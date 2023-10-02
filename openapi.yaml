@@ -5,7 +5,7 @@ info:
 servers:
   - url: http://localhost:8095
 paths:
-  /britishairways/miles/:
+  /britishairways/miles:
     post:
       tags:
         - default
